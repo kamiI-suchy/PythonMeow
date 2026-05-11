@@ -6,7 +6,7 @@ HOST = '127.0.0.1'
 PORT = 65432
 CHESS_FILES = tuple("abcdefgh")
 CHESS_RANKS = tuple("12345678")
-ALL_FIELDS = [f"{file}{rank}" for rank in CHESS_RANKS for file in CHESS_FILES]
+ALL_FIELDS = [f"{chess_file}{rank}" for rank in CHESS_RANKS for chess_file in CHESS_FILES]
 VALID_FIELDS = set(ALL_FIELDS)
 VALID_FIGURES = {"WK", "WQ", "WB", "WN", "WR", "WP", "BK", "BQ", "BB", "BN", "BR", "BP"}
 
@@ -37,7 +37,7 @@ def handle(board, request):
 
     if operation == "clear" and len(args) == 1:
         removed = 0
-        for field in board:
+        for field in ALL_FIELDS:
             if board[field] != "E":
                 removed += 1
                 board[field] = "E"
