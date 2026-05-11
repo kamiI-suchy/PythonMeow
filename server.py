@@ -4,11 +4,11 @@ import socket
 
 HOST = '127.0.0.1'
 PORT = 65432
-FILES = tuple("abcdefgh")
-RANKS = tuple("12345678")
-VALID_FIELDS = {f"{file}{rank}" for rank in RANKS for file in FILES}
+CHESS_FILES = tuple("abcdefgh")
+CHESS_RANKS = tuple("12345678")
+ALL_FIELDS = [f"{file}{rank}" for rank in CHESS_RANKS for file in CHESS_FILES]
+VALID_FIELDS = set(ALL_FIELDS)
 VALID_FIGURES = {"WK", "WQ", "WB", "WN", "WR", "WP", "BK", "BQ", "BB", "BN", "BR", "BP"}
-ALL_FIELDS = [f"{file}{rank}" for rank in RANKS for file in FILES]
 
 def handle(board, request):
     args = request.strip().split()
