@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pl"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Zastosowanie języka Python w środowisku sieciowym (2)</title>
+<link rel="stylesheet" type="text/css" media="all" href="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/jquery-ui.css">
+<link rel="stylesheet" type="text/css" media="all" href="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/styles.css">
+<link rel="stylesheet" type="text/css" media="all" href="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/highlight.min.css">
+<script type="text/javascript" src="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/jquery.js"></script>
+<script type="text/javascript" src="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/jquery-ui.js"></script>
+<script type="text/javascript" src="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/main.js"></script>
+<script type="text/javascript" src="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<style>
+table.chess_figures {
+	margin: 2em auto;
+}
+
+table.chess_figures tr.figures td {
+	background-image: url(img/python/chess_figures.png);
+	width: 860px;
+	height: 120px;
+}
+
+table.chess_figures tr.white td {
+	background-position: 0px -30px;
+}
+
+table.chess_figures tr.black td {
+	background-position: 0px -170px;
+}
+
+table.chess_figures tr.txt td {
+	width: 85px;
+	padding: 0;
+	text-align: center;
+	background-color: #ccc;
+}
+
+table.tab3 tbody tr td:first-child {
+	background-color: #ccc;
+	text-align: center;
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Zastosowanie języka Python w środowisku sieciowym (2)</h1>
+
+<h2 id="h2_1">Informacje wstępne</h2>
+<p>
+Celem poniższych ćwiczeń jest zapoznanie się z zastosowaniem języka 
+Python do tworzenia prostych aplikacji w sieci. Wszystkie ćwiczenia 
+dotyczą sytuacji, w której utworzone jest pojedyncze połączenie klienta z
+ serwerem opisane <a href="http://server.s308/z/t_python_sieci_1.html" target="_blank">tutaj</a>.
+ Można tam też znaleźć "szkielety" skryptów odpowiedzialnych za 
+funkcjonowanie aplikacji zarówno serwera jak i klienta, których relacje w
+ przypadku korzystania wyłącznie z interfejsu loopback można przedstawić
+ na poniższym rysunku (przykład dla protokołu TCP oraz portu 65432):
+
+</p><div class="img" alt="Rys. 1. Komunikacja klient-serwer poprzez interfejs loopback" title="Rys. 1. Komunikacja klient-serwer poprzez interfejs loopback"><img src="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/sockets_loopback_interface.jpg"></div>
+<div class="img_text">Rys. 1. Komunikacja klient-serwer poprzez interfejs loopback</div>
+
+<!--div class="img"><img class="frame" src="img/pvst_sch.png" alt="Rys. 1" title="Rys. 1"/></div>
+<div class="img_text">abc</div-->
+
+<p></p>
+
+<p>
+W tym modelu należy wykonać wszystkie poniższe ćwiczenia, realizując 
+zadane funkcjonalności w formie sformatowanych zapytań. Składnia każdego
+ zapytania będzie charakterystyczna dla danego ćwiczenia, przy czym 
+wspólny będzie zapis dotyczący argumentów zapytania, gdzie nawiasy 
+klamrowe (np. <i>{arg1}</i>) oznaczają argumenty obligatoryjne, natomiast nawiasy kwadratowe (np. <i>[arg2]</i>) oznaczają argumenty opcjonalne. Po wpisaniu działania, które nie istnieje, serwer powinien zwrócić ciąg znaków <b><i>not found</i></b>.
+</p>
+
+<p>
+Można stosować dowolne techniki programistyczne (również programowanie 
+obiektowe). Ważny jest efekt działania zgodny z opisem dla danego 
+ćwiczenia.
+</p>
+
+
+<h2 id="h2_2">Ćwiczenie 3 <!--span style="padding: 0 1em; font-weight: normal;">(dla chętnych na ocenę 5.0)</span--></h2>
+<p>
+Należy utworzyć aplikację serwera w modelu klient-serwer, która 
+umożliwia operacje na szachownicy: dodawania i usuwania figur na 
+określonej pozycji, czyszczenia szachownicy oraz podawania informacji o 
+rodzaju figury na określonym polu, jak również podawanie informacji o 
+stanie szachownicy, zgodnie z poniższą tabelą:
+
+</p><table class="tab3">
+<thead><tr><td>Działanie</td><td style="min-width: 12em;">Format zapytania</td><td>Opis</td><td>Odpowiedź</td></tr></thead>
+<tbody><tr><td>put</td><td>put {figure} {field}</td><td>ustawia figurę na szachownicy (lub zastępuje bieżącą)<br>figure - oznaczenie figury<br>field - oznaczenie pola na szachownicy</td><td><i><b>set</b></i> - w przypadku ustawienia figury na pustym polu<br><i><b>{fig} replaced</b></i> - w przypadku zastąpienia istniejącej figury, gdzie {fig} to oznaczenie zastępowanej figury</td></tr>
+
+<tr><td>delete</td><td>delete {field}</td><td>usuwa figurę z szachownicy (o ile występuje)</td><td><i><b>{fig} deleted</b></i> - w przypadku usunięcia figury, gdzie {fig} to oznaczenie usunietej figury<br><i><b>E</b></i> - w przypadku pustego pola</td></tr>
+
+<tr><td>clear</td><td>clear</td><td>usuwa wszystkie figury z szachownicy</td><td>liczba usuniętych figur</td></tr>
+
+<tr><td>get</td><td>get {field}</td><td>pobiera oznaczenie figury znajdującej się na danym polu</td><td>oznaczenie figury lub <b><i>E</i></b>, jeżeli pole jest puste</td></tr>
+
+<tr><td>getall</td><td>getall</td><td>pobiera bieżący stan szachownicy</td><td>format: {field1}-{figure1} {field2}-{figure2} ...<br>w sumie 64 pary oddzielone spacją<br>w miejscu figury dla pustego pola powinna pojawić się wartość <b><i>E</i></b></td></tr>
+</tbody></table>
+
+
+<table class="chess_figures">
+<tbody><tr class="figures white"><td colspan="6"></td></tr>
+<tr class="txt"><td><b>WK</b><br>white king</td><td><b>WQ</b><br>white queen</td><td><b>WB</b><br>white bishop</td><td><b>WN</b><br>white knight</td><td><b>WR</b><br>white rook</td><td><b>WP</b><br>white pawn</td></tr>
+<tr class="figures black"><td colspan="6"></td></tr>
+<tr class="txt"><td><b>BK</b><br>black king</td><td><b>BQ</b><br>black queen</td><td><b>BB</b><br>black bishop</td><td><b>BN</b><br>black knight</td><td><b>BR</b><br>black rook</td><td><b>BP</b><br>black pawn</td></tr>
+
+</tbody></table>
+
+<div class="img" alt="Rys. 2. Oznaczenia wszystkich figur oraz numeracja pól na szachownicy" title="Rys. 2. Oznaczenia wszystkich figur oraz numeracja pól na szachownicy"><img src="Zastosowanie%20j%C4%99zyka%20Python%20w%20%C5%9Brodowisku%20sieciowym%20(2)_files/chessboard.png"></div>
+<div class="img_text">Rys. 2. Oznaczenia wszystkich figur oraz numeracja pól na szachownicy</div>
+
+<br>
+Przykład działania skryptu klienta:
+<pre>jkowalski@server# ./chess_client.py
+put WK a1
+-&gt; set
+put WN a1
+-&gt; WK replaced
+delete b2
+-&gt; E
+delete a1
+-&gt; WN deleted
+put WP b5
+-&gt; set
+put BP c2
+-&gt; set
+clear
+-&gt; 2
+</pre>
+<p></p>
+
+<!--
+getall
+-> a1-N b1-N c1-N d1-N e1-N f1-N g1-N h1-N a2-N b2-N c2-BP d2-N e2-N f2-N g2-N h2-N
+a3-N b3-N c3-N d3-N e3-N f3-N g3-N h3-N a4-N b4-N c4-N d4-N e4-N f4-N g4-N h4-N
+a5-N b5-WP c5-N d5-N e5-N f5-N g5-N h5-N a6-N b6-N c6-N d6-N e6-N f6-N g6-N h6-N
+a7-N b7-N c7-N d7-N e7-N f7-N g7-N h7-N a8-N b8-N c8-N d8-N e8-N f8-N g8-N h8-N
+-->
+
+
+<h2 id="h2_3">Sprawozdanie</h2>
+<p>
+Zadanie składa się z trzech ćwiczeń, przy czym ćwiczenie 3 jest dla 
+chętnych - wymagane do otrzymania ze sprawozdania oceny 5.0. W 
+sprawozdaniu powinny znaleźć się do każdego ćwiczenia:
+</p><ul>
+	<li>kod źródłowy serwera</li>
+	<li>wyniki wraz z przykładowymi wartościami dla wszystkich działań wyszczególnionych w tabeli</li>
+</ul>
+<p></p>
+
+
+
+<div style="padding: 2em; color: #aaa; font-style: italic; font-size: 0.8em; text-align: right;">
+© 2021 Przemysław Włodarski<br>
+lab. s.308, KPSiIM WE ZUT
+</div>
+
+
+
+</body></html>
