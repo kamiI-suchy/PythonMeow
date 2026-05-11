@@ -21,7 +21,7 @@ def handle(board, request):
         figure, field = args[1], args[2]
         if figure not in VALID_FIGURES or field not in VALID_FIELDS:
             return "not found"
-        previous = board[field]
+        previous = board.get(field, "E")
         board[field] = figure
         return "set" if previous == "E" else f"{previous} replaced"
 
@@ -36,9 +36,11 @@ def handle(board, request):
         return f"{current} deleted"
 
     if operation == "clear" and len(args) == 1:
-        removed = sum(1 for value in board.values() if value != "E")
+        removed = 0
         for field in board:
-            board[field] = "E"
+            if board[field] != "E":
+                removed += 1
+                board[field] = "E"
         return str(removed)
 
     if operation == "get" and len(args) == 2:

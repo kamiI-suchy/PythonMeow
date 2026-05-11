@@ -13,7 +13,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         except EOFError:
             break
 
-        if not query.strip():
+        query = query.strip()
+        if not query:
             continue
 
         s.sendall(query.encode('utf-8'))
