@@ -13,8 +13,8 @@ def recv_line(sock: socket.socket) -> str:
         data = sock.recv(1024)
         if not data:
             if chunks:
-                raise ConnectionError("Połączenie zamknięte przed końcem odpowiedzi.")
-            raise ConnectionError("Połączenie z serwerem zostało zamknięte.")
+                raise ConnectionError("Connection closed before response completed.")
+            raise ConnectionError("Server connection was closed.")
         decoded = data.decode()
         if "\n" in decoded:
             first_line = decoded.split("\n", 1)[0]
@@ -36,7 +36,7 @@ def run_client() -> None:
                 response = recv_line(sock)
                 print(f"-> {response}")
             except ConnectionError as error:
-                print(f"Błąd: {error}")
+                print(f"Error: {error}")
                 break
 
 

@@ -64,12 +64,13 @@ def handle_command(command: str, board: dict[str, str]) -> str:
         return board.get(field, "E")
 
     if action == "getall" and len(parts) == 1:
-        return " ".join(f"{field}-{board[field]}" for field in ALL_FIELDS_ORDERED)
+        return " ".join(f"{field}-{board.get(field, 'E')}" for field in ALL_FIELDS_ORDERED)
 
     return "not found"
 
 
 def run_server() -> None:
+    # As required by the assignment, the server handles a single client connection.
     board = {field: "E" for field in ALL_FIELDS_ORDERED}
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
