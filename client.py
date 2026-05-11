@@ -7,12 +7,15 @@ PORT = 65432
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
-    print(f'Połączono z serwerem {HOST}:{PORT}')
-    print('Wpisz zapytanie (np. "add 2 3") lub quit aby zakończyć.')
     while True:
-        query = input('> ')
-        if query.lower() == 'quit':
+        try:
+            query = input()
+        except EOFError:
             break
+
+        if not query.strip():
+            continue
+
         s.sendall(query.encode('utf-8'))
         data = s.recv(1024)
-        print('Odpowiedż: ', data.decode('utf-8'))
+        print(f"-> {data.decode('utf-8')}")
