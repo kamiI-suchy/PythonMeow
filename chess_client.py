@@ -12,7 +12,9 @@ def recv_line(sock: socket.socket) -> str:
     while True:
         data = sock.recv(1024)
         if not data:
-            return "".join(chunks).strip()
+            if chunks:
+                raise ConnectionError("Połączenie zamknięte przed końcem odpowiedzi.")
+            raise ConnectionError("Połączenie z serwerem zostało zamknięte.")
         decoded = data.decode()
         if "\n" in decoded:
             first_line = decoded.split("\n", 1)[0]
@@ -29,9 +31,13 @@ def run_client() -> None:
                 command = input()
             except (EOFError, KeyboardInterrupt):
                 break
-            sock.sendall((command.strip() + "\n").encode())
-            response = recv_line(sock)
-            print(f"-> {response}")
+            try:
+                sock.sendall((command.strip() + "\n").encode())
+                response = recv_line(sock)
+                print(f"-> {response}")
+            except ConnectionError as error:
+                print(f"Błąd: {error}")
+                break
 
 
 if __name__ == "__main__":

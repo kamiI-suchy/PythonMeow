@@ -6,9 +6,9 @@ import socket
 HOST = "127.0.0.1"
 PORT = 65432
 
-FILES = "abcdefgh"
+BOARD_FILES = "abcdefgh"
 RANKS = "12345678"
-VALID_FIELDS = {f"{file_}{rank}" for rank in RANKS for file_ in FILES}
+VALID_FIELDS = {f"{file_}{rank}" for rank in RANKS for file_ in BOARD_FILES}
 VALID_FIGURES = {
     "WK",
     "WQ",
@@ -23,7 +23,7 @@ VALID_FIGURES = {
     "BR",
     "BP",
 }
-ALL_FIELDS_ORDERED = [f"{file_}{rank}" for rank in RANKS for file_ in FILES]
+ALL_FIELDS_ORDERED = [f"{file_}{rank}" for rank in RANKS for file_ in BOARD_FILES]
 
 
 def handle_command(command: str, board: dict[str, str]) -> str:
@@ -37,7 +37,7 @@ def handle_command(command: str, board: dict[str, str]) -> str:
         figure, field = parts[1], parts[2].lower()
         if figure not in VALID_FIGURES or field not in VALID_FIELDS:
             return "not found"
-        previous = board[field]
+        previous = board.get(field, "E")
         board[field] = figure
         return "set" if previous == "E" else f"{previous} replaced"
 
@@ -45,7 +45,7 @@ def handle_command(command: str, board: dict[str, str]) -> str:
         field = parts[1].lower()
         if field not in VALID_FIELDS:
             return "not found"
-        previous = board[field]
+        previous = board.get(field, "E")
         if previous == "E":
             return "E"
         board[field] = "E"
@@ -61,7 +61,7 @@ def handle_command(command: str, board: dict[str, str]) -> str:
         field = parts[1].lower()
         if field not in VALID_FIELDS:
             return "not found"
-        return board[field]
+        return board.get(field, "E")
 
     if action == "getall" and len(parts) == 1:
         return " ".join(f"{field}-{board[field]}" for field in ALL_FIELDS_ORDERED)
