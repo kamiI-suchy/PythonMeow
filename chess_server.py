@@ -84,7 +84,7 @@ def run_server() -> None:
                 data = conn.recv(1024)
                 if not data:
                     break
-                buffer += data.decode()
+                buffer += data.decode('utf-8', errors='replace')
                 while "\n" in buffer:
                     line, buffer = buffer.split("\n", 1)
                     response = handle_command(line.strip(), board)

@@ -15,7 +15,7 @@ def recv_line(sock: socket.socket) -> str:
             if chunks:
                 raise ConnectionError("Connection closed before response completed.")
             raise ConnectionError("Server connection was closed.")
-        decoded = data.decode()
+        decoded = data.decode('utf-8', errors='replace')
         if "\n" in decoded:
             first_line = decoded.split("\n", 1)[0]
             chunks.append(first_line)
